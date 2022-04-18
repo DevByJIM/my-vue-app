@@ -1,48 +1,45 @@
 import { UserContext } from "../context/UserProvider";
 import { useContext } from "react";
-import { useForm } from "../hooks/useForm";
+import { useForm } from 'react-hook-form';
 
 const Register = () => {
-    const initialState = {
-        email: "",
-        password: "",
-    };
-    const [values, handleChange, reset] = useForm(initialState);
+    
     const { registerUser } = useContext(UserContext);
+    const {register, handleSumbit, formState: {errors}} = useForm();
 
-    const handleSumbit = async (e) => {
-        e.preventDefault();
+    const onSubmit = data =>console.log(data);
 
-        try {
-            await registerUser(values.email, values.password);
-        } catch (error) {
-            console.log(error.code);
-        }
+    // const handleSumbit = async (e) => {
+    //     e.preventDefault();
 
-        // reset();
-    };
+    //     try {
+    //         await registerUser(values.email, values.password);
+    //     } catch (error) {
+    //         console.log(error.code);
+    //     }
+
+    //     // reset();
+    // };
 
     return (
         <>
             <h1>Formulario de Registro</h1>
-            <form onSubmit={handleSumbit}>
+            <form onSubmit={handleSumbit(onSubmit)}>
                 <input
                     type="email"
-                    name="email"
                     placeholder="Ingrese email"
-                    onChange={handleChange}
+                    {...register('email')}
                 />
                 <input
                     type="password"
-                    name="password"
                     placeholder="Ingrese el password"
-                    onChange={handleChange}
+                    {...register('password')}
                 />
                 <button type="submit">Registrar</button>
             </form>
 
             <h4>
-                {values.email} {values.password}
+                {/* {values.email} {values.password} */}
             </h4>
         </>
     );
