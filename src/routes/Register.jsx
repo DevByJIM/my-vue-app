@@ -1,6 +1,7 @@
 import { UserContext } from "../context/UserProvider";
 import { useContext } from "react";
 import { useForm } from "../hooks/useForm";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
     const initialState = {
@@ -9,12 +10,14 @@ const Register = () => {
     };
     const [values, handleChange, reset] = useForm(initialState);
     const { registerUser } = useContext(UserContext);
+    const navigate = useNavigate();
 
     const handleSumbit = async (e) => {
         e.preventDefault();
 
         try {
             await registerUser(values.email, values.password);
+            navigate("/");
         } catch (error) {
             console.log(error.code);
         }

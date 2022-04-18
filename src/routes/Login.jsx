@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserProvider";
 import { useForm } from "../hooks/useForm";
 
@@ -8,18 +9,16 @@ const Login = () => {
         password: "",
     });
 
-    const { user, setUser, status, loginUser } = useContext(UserContext);
+    const { user, loginUser } = useContext(UserContext);
+    const navigate = useNavigate();
 
     const handleSumbit = async (e) => {
         e.preventDefault();
-        setUser({
-            email: values.email,
-            password: values.password
-        });
 
         try {
             await loginUser(values.email, values.password);
-            console.log(user.email + '. CONECTADO CON ÉXITO');
+            console.log('CONECTADO CON ÉXITO');
+            navigate("/");
         } catch (error) {
             console.log("KO. " + error.code);
 
@@ -47,7 +46,7 @@ const Login = () => {
                 <button type="submit">Entrar</button>
             </form>
             <h1>Login: {values.email}</h1>
-            <h2>{status ? `Conectado como ${values.password}` : "No Conectado"}</h2>
+            <h2>{user ? `Conectado como ${values.password}` : "No Conectado"}</h2>
         </>
     );
 };
