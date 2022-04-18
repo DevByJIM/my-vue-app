@@ -1,53 +1,53 @@
 import { UserContext } from "../context/UserProvider";
 import { useContext } from "react";
-import { useForm } from "../hooks/useForm";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-    const initialState = {
-        email: "",
-        password: "",
-    };
-    const [values, handleChange, reset] = useForm(initialState);
-    const { registerUser } = useContext(UserContext);
-    const navigate = useNavigate();
+  const { registerUser } = useContext(UserContext);
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSumbit,
+    formState: { errors },
+  } = useForm();
 
-    const handleSumbit = async (e) => {
-        e.preventDefault();
+  const onSubmit = (data) => console.log(data);
 
-        try {
-            await registerUser(values.email, values.password);
-            navigate("/");
-        } catch (error) {
-            console.log(error.code);
-        }
+  // const handleSumbit = async (e) => {
+  //     e.preventDefault();
 
-        // reset();
-    };
+  //     try {
+  //         await registerUser(values.email, values.password);
+  //         navigate("/");
+  //     } catch (error) {
+  //         console.log(error.code);
+  //     }
 
-    return (
-        <>
-            <h1>Formulario de Registro</h1>
-            <form onSubmit={handleSumbit}>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Ingrese email"
-                    onChange={handleChange}
-                />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Ingrese el password"
-                    onChange={handleChange}
-                />
-                <button type="submit">Registrar</button>
-            </form>
+  //     reset();
+  // };
 
-            <h4>
-                {values.email} {values.password}
-            </h4>
-        </>
-    );
+  return (
+    <>
+      <h1>Formulario de Registro</h1>
+      <form onSubmit={handleSumbit(onSubmit)}>
+        <input
+          type="email"
+          placeholder="Ingrese email"
+          {...register("email")}
+        />
+        <input
+          type="password"
+          placeholder="Ingrese el password"
+          {...register("password")}
+        />
+        <button type="submit">Registrar</button>
+      </form>
+
+      <h4>
+        {/* {values.email} {values.password} */}
+      </h4>
+    </>
+  );
 };
 export default Register;
