@@ -1,53 +1,67 @@
 import { useContext } from "react";
 import { UserContext } from "../context/UserProvider";
-import { useForm } from "../hooks/useForm";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { errFirebase } from "../utils/errFirebase";
+import { formValidate } from "../utils/formValidate";
+
+import FormError from "../components/FormError";
+import FormInput from "../components/FormInput";
+import Title from "../components/Title";
+import Button from "../components/Button";
 
 const Login = () => {
-    const [values, handleChange, reset] = useForm({
-        email: "",
-        password: "",
-    });
+    const { loginUser } = useContext(UserContext);
+    const { navigate } = useNavigate();
+    const { required, patternEmail, minLength, validateTrim } = formValidate();
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setError,
+    } = useForm();
 
-    const { user, setUser, status, loginUser } = useContext(UserContext);
-
-    const handleSumbit = async (e) => {
-        e.preventDefault();
-        setUser({
-            email: values.email,
-            password: values.password
-        });
-
+    const onSubmit = async ({ email, password }) => {
         try {
-            await loginUser(values.email, values.password);
-            console.log(user.email + '. CONECTADO CON ÉXITO');
+            await loginUser(email, password);
+            console.log("Usuario logeado con éxito");
+            navigate("/");
         } catch (error) {
-            console.log("KO. " + error.code);
-
+            const { code, message } = errFirebase(error.code);
+            setError(code, { message });
         }
-        reset();
     };
 
     return (
         <>
-            <form onSubmit={handleSumbit}>
-                <input
-                    type="text"
-                    name="email"
-                    value={values.email}
-                    placeholder="Ingresa tu email"
-                    onChange={handleChange}
-                />
-                <input
+            <Title text="Login en la App" />
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <FormInput
+                    type="email"
+                    placeholder="Ingrese email"
+                    {...register("email", {
+                        required: required,
+                        pattern: patternEmail,
+                    })}
+                    label="Ingresa tu correo"
+                    error={errors.email}
+                >
+                    <FormError error={errors.email} />
+                </FormInput>
+                <FormInput
                     type="password"
-                    name="password"
-                    value={values.password}
                     placeholder="Ingrese el password"
-                    onChange={handleChange}
-                />
-                <button type="submit">Entrar</button>
+                    {...register("password", {
+                        minLength: minLength(6),
+                        validate: validateTrim,
+                    })}
+                    label="Ingresa tu contraseña"
+                    error={errors.password}
+                >
+                    <FormError error={errors.password} />
+                </FormInput>
+                <Button type="submit" text="Entrar" />
             </form>
-            <h1>Login: {values.email}</h1>
-            <h2>{status ? `Conectado como ${values.password}` : "No Conectado"}</h2>
         </>
     );
 };

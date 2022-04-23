@@ -14,8 +14,8 @@ const Navbar = () => {
     };
 
     return (
-        <div>
-            <ul>
+        
+            <nav>
                 <NavLink to="/">Inicio | </NavLink>
                 {user ? (
                     <>
@@ -27,8 +27,8 @@ const Navbar = () => {
                         <NavLink to="/login">Login |</NavLink>
                     </>
                 )}
-            </ul>
-        </div>
+            </nav>
+        
     );
 };
 export default Navbar;
