@@ -14,7 +14,7 @@ export const errFirebase = (code) => {
 
         case "auth/wrong-password":
             return {
-                code: "email",
+                code: "password",
                 message:"Contraseña incorrecta"
             }
 

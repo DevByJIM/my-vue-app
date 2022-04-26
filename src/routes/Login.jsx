@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../context/UserProvider";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,8 @@ import Button from "../components/Button";
 
 const Login = () => {
     const { loginUser } = useContext(UserContext);
-    const { navigate } = useNavigate();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
     const { required, patternEmail, minLength, validateTrim } = formValidate();
     const {
         register,
@@ -23,12 +24,15 @@ const Login = () => {
 
     const onSubmit = async ({ email, password }) => {
         try {
+            setLoading(true);
             await loginUser(email, password);
             console.log("Usuario logeado con éxito");
             navigate("/");
         } catch (error) {
             const { code, message } = errFirebase(error.code);
             setError(code, { message });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -60,7 +64,8 @@ const Login = () => {
                 >
                     <FormError error={errors.password} />
                 </FormInput>
-                <Button type="submit" text="Entrar" />
+
+                <Button type="submit" text="Entrar" loading={loading} />
             </form>
         </>
     );

@@ -1,13 +1,17 @@
-import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./routes/Home";
-import Login from "./routes/Login";
-import Error404 from "./routes/Error404";
-import RequireAuth from "./components/RequireAuth";
-import Register from "./routes/Register";
-import { useContext } from "react";
 import { UserContext } from "./context/UserProvider";
-import LayoutContainerForm from "./components/LayoutContainerForm";
+import { Routes, Route } from "react-router-dom";
+import { useContext } from "react";
+
+import Error404 from "./routes/Error404";
+import Navbar from "./components/Navbar";
+import Register from "./routes/Register";
+import Perfil from "./routes/Perfil";
+import Login from "./routes/Login";
+import Home from "./routes/Home";
+
+import LayoutRequireAuth from "./components/layouts/LayoutRequireAuth";
+import LayoutContainerForm from "./components/layouts/LayoutContainerForm";
+import LayoutRedirect from "./components/layouts/LayoutRedirect";
 
 const App = () => {
     const { user } = useContext(UserContext);
@@ -19,21 +23,20 @@ const App = () => {
     return (
         <>
             <Navbar />
-            <h1>App Vite</h1>
+
             <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <RequireAuth>
-                            <Home />
-                        </RequireAuth>
-                    }
-                />
+                <Route path="/" element={<LayoutRequireAuth />}>
+                    <Route index element={<Home />} />
+                    <Route path="perfil" element={<Perfil />} />
+                </Route>
+
                 <Route path="/" element={<LayoutContainerForm />}>
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                 </Route>
-                <Route path="/*" element={<Error404 />} />
+                <Route path="/:nanoid" element={<LayoutRedirect />}>
+                    <Route index element={<Error404 />} />
+                </Route>
             </Routes>
         </>
     );
